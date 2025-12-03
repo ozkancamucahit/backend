@@ -16,9 +16,8 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
+const app = initializeApp();
+const db = getFirestore();
 // issue on python : https://github.com/firebase/firebase-tools/issues/8571
 
 const IMAGE_SIZE = 1024;
@@ -102,8 +101,8 @@ exports.processGeneration = onDocumentCreated(
 
       // Access the parameter `{generationId}` with `event.params`
       logger.log("Processing", event.params.generationId, generation);
-      // delay between 30 or 60 seconds to simulate a long process
-      const delayTime = Math.floor(Math.random() * 30_000) + 30_000;
+      // delay between 5 or 10 seconds to simulate a long process
+      const delayTime = Math.floor(Math.random() * 5_000) + 5_000;
       const start = Date.now();
       while (Date.now() - start < delayTime) {
         // Do nothing
@@ -113,15 +112,15 @@ exports.processGeneration = onDocumentCreated(
       let success;
       if (Math.random() < 0.7) {
         success = true;
-        logger.log("Generation succeeded for", event.params.documentId);
+        logger.log("Generation succeeded for", event.params.generationId);
       } else {
         success = false;
-        logger.error("Generation failed for", event.params.documentId);
+        logger.error("Generation failed for", event.params.generationId);
       }
 
       const status = success ? "done" : "failed";
       const mockImageUrl = success
-        ? `https://picsum.photos/seed/${event.params.documentId}/${IMAGE_SIZE}/${IMAGE_SIZE}`
+        ? `https://picsum.photos/seed/${event.params.generationId}/${IMAGE_SIZE}/${IMAGE_SIZE}`
         : "";
       const updatedAt = new Date().toISOString();
       const errorMessage = success
